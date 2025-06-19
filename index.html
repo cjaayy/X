@@ -1,0 +1,1173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>X</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-primary: #ffffff;
+            --bg-secondary: #f7f9fa;
+            --text-primary: #0f1419;
+            --text-secondary: #536471;
+            --border-color: #eff3f4;
+            --hover-bg: #f7f9fa;
+            --blue: #1d9bf0;
+            --blue-hover: #1a8cd8;
+            --red: #f91880;
+            --red-hover: #e6105c;
+            --green: #00ba7c;
+            --green-hover: #00a36b;
+        }
+
+        [data-theme="dark"] {
+            --bg-primary: #000000;
+            --bg-secondary: #16181c;
+            --text-primary: #e7e9ea;
+            --text-secondary: #71767b;
+            --border-color: #2f3336;
+            --hover-bg: #1e2328;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        .container {
+            display: flex;
+            max-width: 1200px;
+            margin: 0 auto;
+            min-height: 100vh;
+        }
+
+        /* Theme Toggle */
+        .theme-toggle {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+            border: 1px solid var(--border-color);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            cursor: pointer;
+            font-size: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            z-index: 1000;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .theme-toggle:hover {
+            background-color: var(--hover-bg);
+            transform: scale(1.1) rotate(180deg);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+
+        .theme-toggle:active {
+            transform: scale(0.95) rotate(180deg);
+        }
+
+        [data-theme="dark"] .theme-toggle {
+            box-shadow: 0 2px 8px rgba(255,255,255,0.1);
+        }
+
+        [data-theme="dark"] .theme-toggle:hover {
+            box-shadow: 0 4px 12px rgba(255,255,255,0.15);
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 275px;
+            padding: 20px;
+            border-right: 1px solid var(--border-color);
+            position: fixed;
+            height: 100vh;
+            overflow-y: auto;
+        }
+
+        .logo {
+            font-size: 28px;
+            font-weight: bold;
+            margin-bottom: 30px;
+            padding: 12px;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .logo:hover {
+            transform: scale(1.05);
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            padding: 12px 16px;
+            margin: 2px 0;
+            border-radius: 24px;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 20px;
+            font-weight: 400;
+            text-decoration: none;
+            color: var(--text-primary);
+        }
+
+        .nav-item:hover {
+            background-color: var(--hover-bg);
+            transform: translateX(2px);
+        }
+
+        .nav-item:active {
+            transform: scale(0.98);
+        }
+
+        .nav-item.active {
+            font-weight: 700;
+            background-color: var(--hover-bg);
+        }
+
+        .nav-icon {
+            width: 26px;
+            height: 26px;
+            margin-right: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .post-btn {
+            background-color: var(--blue);
+            color: white;
+            border: none;
+            border-radius: 24px;
+            padding: 16px 32px;
+            font-size: 17px;
+            font-weight: 700;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 20px;
+            transition: all 0.2s;
+        }
+
+        .post-btn:hover {
+            background-color: var(--blue-hover);
+            transform: translateY(-1px);
+        }
+
+        .post-btn:active {
+            transform: scale(0.98);
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            margin-left: 275px;
+            border-right: 1px solid var(--border-color);
+            max-width: 600px;
+        }
+
+        .header {
+            position: sticky;
+            top: 0;
+            background-color: var(--bg-primary);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--border-color);
+            padding: 16px 20px;
+            display: flex;
+            align-items: center;
+            z-index: 10;
+        }
+
+        .back-btn {
+            background: none;
+            border: none;
+            margin-right: 32px;
+            cursor: pointer;
+            color: var(--text-primary);
+            font-size: 20px;
+            padding: 8px;
+            border-radius: 50%;
+            transition: all 0.2s;
+        }
+
+        .back-btn:hover {
+            background-color: var(--hover-bg);
+        }
+
+        .back-btn:active {
+            transform: scale(0.95);
+        }
+
+        .header-title {
+            font-size: 20px;
+            font-weight: 700;
+        }
+
+        .post-header {
+            display: flex;
+            align-items: center;
+            padding: 12px 16px;
+            color: var(--text-secondary);
+            font-size: 13px;
+        }
+
+        .popular-badge {
+            margin-right: 8px;
+        }
+
+        .post {
+            border-bottom: 1px solid var(--border-color);
+            padding: 16px;
+        }
+
+        .post-author {
+            display: flex;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            margin-right: 12px;
+            background-color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .avatar:hover {
+            transform: scale(1.05);
+            opacity: 0.8;
+        }
+
+        .author-info {
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+        }
+
+        .author-info:hover {
+            text-decoration: underline;
+        }
+
+        .author-name {
+            font-weight: 700;
+            margin-right: 4px;
+        }
+
+        .verified {
+            color: var(--blue);
+            margin-right: 4px;
+        }
+
+        .username {
+            color: var(--text-secondary);
+        }
+
+        .post-content {
+            font-size: 23px;
+            line-height: 1.3;
+            margin-bottom: 16px;
+            cursor: text;
+            user-select: text;
+        }
+
+        .video-container {
+            position: relative;
+            border-radius: 16px;
+            overflow: hidden;
+            margin-bottom: 16px;
+            background: #000;
+            cursor: pointer;
+        }
+
+        .video-player {
+            width: 100%;
+            height: 300px;
+            background: linear-gradient(45deg, #1a1a2e, #16213e);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            transition: all 0.3s;
+        }
+
+        .video-player:hover {
+            filter: brightness(1.1);
+        }
+
+        .play-btn {
+            width: 60px;
+            height: 60px;
+            background: rgba(255, 255, 255, 0.9);
+            border: none;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            transition: all 0.2s;
+        }
+
+        .play-btn:hover {
+            background: rgba(255, 255, 255, 1);
+            transform: scale(1.1);
+        }
+
+        .play-btn:active {
+            transform: scale(0.95);
+        }
+
+        .video-controls {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(transparent, rgba(0,0,0,0.7));
+            padding: 20px 16px 16px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .progress-bar {
+            flex: 1;
+            height: 4px;
+            background: rgba(255,255,255,0.3);
+            border-radius: 2px;
+            overflow: hidden;
+            cursor: pointer;
+        }
+
+        .progress-bar:hover {
+            height: 6px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: white;
+            width: 33%;
+            border-radius: 2px;
+            transition: width 0.1s;
+        }
+
+        .time-display {
+            color: white;
+            font-size: 13px;
+            user-select: none;
+        }
+
+        .video-actions {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            display: flex;
+            gap: 8px;
+        }
+
+        .video-action-btn {
+            width: 32px;
+            height: 32px;
+            background: rgba(0,0,0,0.75);
+            border: none;
+            border-radius: 50%;
+            color: white;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+
+        .video-action-btn:hover {
+            background: rgba(0,0,0,0.9);
+            transform: scale(1.1);
+        }
+
+        .video-action-btn:active {
+            transform: scale(0.95);
+        }
+
+        .post-meta {
+            color: var(--text-secondary);
+            font-size: 15px;
+            margin-bottom: 12px;
+        }
+
+        .post-actions {
+            display: flex;
+            justify-content: space-between;
+            max-width: 500px;
+            gap: 8px;
+        }
+
+        .action-btn {
+            display: flex;
+            align-items: center;
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 20px;
+            transition: all 0.2s;
+            font-size: 14px;
+            min-width: 60px;
+            justify-content: center;
+        }
+
+        .action-btn:hover {
+            background-color: var(--hover-bg);
+            transform: scale(1.05);
+        }
+
+        .action-btn:active {
+            transform: scale(0.95);
+        }
+
+        .action-btn.liked {
+            color: var(--red);
+        }
+
+        .action-btn.retweeted {
+            color: var(--green);
+        }
+
+        .action-btn.replied {
+            color: var(--blue);
+        }
+
+        .action-btn.bookmarked {
+            color: var(--blue);
+        }
+
+        .action-btn span {
+            margin-left: 8px;
+        }
+
+        .reply-section {
+            padding: 16px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .reply-input {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+        }
+
+        .reply-text {
+            flex: 1;
+            border: none;
+            background: none;
+            color: var(--text-primary);
+            font-size: 20px;
+            resize: none;
+            outline: none;
+            font-family: inherit;
+            min-height: 50px;
+            transition: all 0.2s;
+        }
+
+        .reply-text:focus {
+            background-color: var(--bg-secondary);
+            border-radius: 8px;
+            padding: 8px;
+        }
+
+        .reply-btn {
+            background-color: var(--blue);
+            color: white;
+            border: none;
+            border-radius: 20px;
+            padding: 8px 16px;
+            font-weight: 700;
+            cursor: pointer;
+            opacity: 0.5;
+            transition: all 0.2s;
+        }
+
+        .reply-btn:hover:not(:disabled) {
+            background-color: var(--blue-hover);
+            transform: translateY(-1px);
+        }
+
+        .reply-btn.active {
+            opacity: 1;
+        }
+
+        .comment {
+            padding: 16px;
+            border-bottom: 1px solid var(--border-color);
+            transition: background-color 0.2s;
+        }
+
+        .comment:hover {
+            background-color: var(--bg-secondary);
+        }
+
+        .comment-author {
+            display: flex;
+            align-items: center;
+            margin-bottom: 8px;
+            cursor: pointer;
+        }
+
+        .comment-author:hover .author-name {
+            text-decoration: underline;
+        }
+
+        .comment-content {
+            margin-bottom: 12px;
+            line-height: 1.3;
+            cursor: text;
+            user-select: text;
+        }
+
+        /* Right Sidebar */
+        .right-sidebar {
+            width: 350px;
+            padding: 20px;
+            position: fixed;
+            right: 0;
+            height: 100vh;
+            overflow-y: auto;
+        }
+
+        .search-box {
+            background-color: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 24px;
+            padding: 12px 16px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            transition: all 0.2s;
+        }
+
+        .search-box:focus-within {
+            border-color: var(--blue);
+            background-color: var(--bg-primary);
+        }
+
+        .search-input {
+            flex: 1;
+            background: none;
+            border: none;
+            outline: none;
+            font-size: 15px;
+            color: var(--text-primary);
+        }
+
+        .search-input::placeholder {
+            color: var(--text-secondary);
+        }
+
+        .widget {
+            background-color: var(--bg-secondary);
+            border-radius: 16px;
+            margin-bottom: 20px;
+            overflow: hidden;
+            transition: transform 0.2s;
+        }
+
+        .widget:hover {
+            transform: translateY(-2px);
+        }
+
+        .widget-header {
+            padding: 16px;
+            font-size: 20px;
+            font-weight: 700;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .trending-item {
+            padding: 12px 16px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .trending-item:hover {
+            background-color: var(--hover-bg);
+            transform: translateX(4px);
+        }
+
+        .trending-item:active {
+            transform: scale(0.98);
+        }
+
+        .trending-category {
+            color: var(--text-secondary);
+            font-size: 13px;
+        }
+
+        .trending-topic {
+            font-weight: 700;
+            margin: 2px 0;
+        }
+
+        .trending-posts {
+            color: var(--text-secondary);
+            font-size: 13px;
+        }
+
+        .relevant-people {
+            padding: 16px;
+        }
+
+        .person {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 0;
+            transition: all 0.2s;
+        }
+
+        .person:hover {
+            background-color: var(--hover-bg);
+            border-radius: 8px;
+            padding: 12px 8px;
+        }
+
+        .person-info {
+            display: flex;
+            align-items: center;
+            flex: 1;
+            cursor: pointer;
+        }
+
+        .person-details {
+            margin-left: 12px;
+        }
+
+        .person-name {
+            font-weight: 700;
+        }
+
+        .person-name:hover {
+            text-decoration: underline;
+        }
+
+        .person-handle {
+            color: var(--text-secondary);
+            font-size: 14px;
+        }
+
+        .person-bio {
+            color: var(--text-secondary);
+            font-size: 14px;
+            margin-top: 4px;
+        }
+
+        .follow-btn {
+            background-color: var(--text-primary);
+            color: var(--bg-primary);
+            border: none;
+            border-radius: 20px;
+            padding: 6px 16px;
+            font-weight: 700;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.2s;
+        }
+
+        .follow-btn:hover {
+            transform: translateY(-1px);
+            opacity: 0.9;
+        }
+
+        .follow-btn:active {
+            transform: scale(0.95);
+        }
+
+        /* Modal styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            backdrop-filter: blur(4px);
+        }
+
+        .modal-content {
+            background-color: var(--bg-primary);
+            margin: 15% auto;
+            padding: 20px;
+            border-radius: 16px;
+            width: 90%;
+            max-width: 500px;
+            border: 1px solid var(--border-color);
+        }
+
+        .close {
+            color: var(--text-secondary);
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .close:hover {
+            color: var(--text-primary);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 1024px) {
+            .right-sidebar {
+                display: none;
+            }
+            .main-content {
+                max-width: none;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 80px;
+            }
+            .main-content {
+                margin-left: 80px;
+            }
+            .nav-item span {
+                display: none;
+            }
+            .post-btn {
+                width: 50px;
+                height: 50px;
+                border-radius: 50%;
+                padding: 0;
+                font-size: 24px;
+            }
+            .logo {
+                text-align: center;
+            }
+            .theme-toggle {
+                top: 15px;
+                right: 15px;
+                width: 36px;
+                height: 36px;
+                font-size: 16px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                flex-direction: column;
+            }
+            .sidebar {
+                position: relative;
+                width: 100%;
+                height: auto;
+                border-right: none;
+                border-bottom: 1px solid var(--border-color);
+                padding: 10px;
+            }
+            .main-content {
+                margin-left: 0;
+            }
+            .nav-item {
+                justify-content: center;
+                padding: 8px;
+            }
+            .post-btn {
+                position: fixed;
+                bottom: 20px;
+                right: 20px;
+                width: 56px;
+                height: 56px;
+                z-index: 100;
+            }
+            .theme-toggle {
+                top: 10px;
+                right: 10px;
+                width: 34px;
+                height: 34px;
+                font-size: 14px;
+            }
+        }
+    </style>
+</head>
+<body data-theme="light">
+    <!-- Theme Toggle - Top Right Corner -->
+    <button class="theme-toggle" onclick="toggleTheme()" title="Toggle theme">
+        <span id="theme-icon">☀️</span>
+    </button>
+
+    <!-- Post Modal -->
+    <div id="postModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <h2>Create Post</h2>
+            <textarea placeholder="What's happening?" style="width: 100%; height: 120px; margin: 20px 0; padding: 12px; border: 1px solid var(--border-color); border-radius: 8px; background: var(--bg-primary); color: var(--text-primary); font-family: inherit; resize: vertical;"></textarea>
+            <button onclick="submitPost()" style="background: var(--blue); color: white; border: none; border-radius: 20px; padding: 10px 20px; font-weight: 700; cursor: pointer;">Post</button>
+        </div>
+    </div>
+
+    <div class="container">
+        <!-- Left Sidebar -->
+        <div class="sidebar">
+            <div class="logo">𝕏</div>
+            <nav>
+                <a href="#" class="nav-item active" onclick="navigate('home')">
+                    <svg class="nav-icon" viewBox="0 0 24 24" width="26" height="26" fill="currentColor"><path d="M21.591 7.146L12.52 1.157c-.316-.21-.724-.21-1.04 0l-9.071 5.99c-.26.173-.409.456-.409.757v13.183c0 .502.418.913.929.913H9.14c.51 0 .929-.41.929-.913v-7.075h3.909v7.075c0 .502.417.913.928.913h6.165c.511 0 .929-.41.929-.913V7.904c0-.301-.158-.584-.408-.758z"></path></svg>
+                    <span>Home</span>
+                </a>
+                <a href="#" class="nav-item" onclick="navigate('explore')">
+                    <svg class="nav-icon" viewBox="0 0 24 24" width="26" height="26" fill="currentColor"><path d="M10.25 3.75c-3.59 0-6.5 2.91-6.5 6.5s2.91 6.5 6.5 6.5c1.795 0 3.419-.726 4.596-1.904 1.178-1.177 1.904-2.801 1.904-4.596 0-3.59-2.91-6.5-6.5-6.5zm-8.5 6.5c0-4.694 3.806-8.5 8.5-8.5s8.5 3.806 8.5 8.5c0 1.986-.682 3.815-1.824 5.262l4.781 4.781-1.414 1.414-4.781-4.781C13.565 17.318 11.736 18 9.75 18c-4.694 0-8.5-3.806-8.5-8.5z"></path></svg>
+                    <span>Explore</span>
+                </a>
+                <a href="#" class="nav-item" onclick="navigate('notifications')">
+                    <svg class="nav-icon" viewBox="0 0 24 24" width="26" height="26" fill="currentColor"><path d="M19.993 9.042C19.48 5.017 16.054 2 11.996 2s-7.49 3.021-7.999 7.051L2.866 18H7.1c.463 2.282 2.481 4 4.9 4s4.437-1.718 4.9-4h4.234l-1.141-8.958zM12 20c-1.306 0-2.417-.835-2.829-2h5.658c-.412 1.165-1.523 2-2.829 2zm-6.866-4l.847-6.698C6.364 6.272 8.941 4 11.996 4s5.627 2.268 6.013 5.295L18.864 16H5.134z"></path></svg>
+                    <span>Notifications</span>
+                </a>
+                <a href="#" class="nav-item" onclick="navigate('messages')">
+                    <svg class="nav-icon" viewBox="0 0 24 24" width="26" height="26" fill="currentColor"><path d="M1.998 5.5c0-1.381 1.119-2.5 2.5-2.5h15c1.381 0 2.5 1.119 2.5 2.5v13c0 1.381-1.119 2.5-2.5 2.5h-15c-1.381 0-2.5-1.119-2.5-2.5v-13zm2.5-.5c-.276 0-.5.224-.5.5v2.764l8 3.638 8-3.636V5.5c0-.276-.224-.5-.5-.5h-15zm15.5 5.463l-8 3.636-8-3.638V18.5c0 .276.224.5.5.5h15c.276 0 .5-.224.5-.5v-8.037z"></path></svg>
+                    <span>Messages</span>
+                </a>
+                <a href="#" class="nav-item" onclick="navigate('grok')">
+                    <img src="images/images.png" class="nav-icon" alt="Grok Icon" width="26" height="26" />
+                    <span>Grok</span>
+                </a>
+                
+                <a href="#" class="nav-item" onclick="navigate('communities')">
+                    <img src="images\User_Interface_group_contact-512.webp" class="nav-icon" alt="Communities Icon" width="26" height="26" />
+                    <span>Communities</span>
+                </a>
+                <a href="#" class="nav-item" onclick="navigate('premium')">
+                    <svg class="nav-icon" viewBox="0 0 24 24" width="26" height="26" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"></path></svg>
+                    <span>Premium</span>
+                </a>
+                <a href="#" class="nav-item" onclick="navigate('profile')">
+                    <svg class="nav-icon" viewBox="0 0 24 24" width="26" height="26" fill="currentColor"><path d="M5.651 19h12.698c-.337-1.8-1.023-3.21-1.945-4.19C15.318 13.65 13.838 13 12 13s-3.317.65-4.404 1.81c-.922.98-1.608 2.39-1.945 4.19zm.486-5.56C7.627 11.85 9.648 11 12 11s4.373.85 5.863 2.44c1.477 1.58 2.366 3.8 2.632 6.46l.11 1.1H3.395l.11-1.1c.266-2.66 1.155-4.88 2.632-6.46zM12 4c-1.105 0-2 .9-2 2s.895 2 2 2 2-.9 2-2-.895-2-2-2zM8 6c0-2.21 1.791-4 4-4s4 1.79 4 4-1.791 4-4 4-4-1.79-4-4z"></path></svg>
+                    <span>Profile</span>
+                </a>
+                <a href="#" class="nav-item" onclick="navigate('more')">
+                    <svg class="nav-icon" viewBox="0 0 24 24" width="26" height="26" fill="currentColor"><path d="M3 12c0-1.1.9-2 2-2s2 .9 2 2-.9 2-2 2-2-.9-2-2zm9 2c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm7 0c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2z"></path></svg>
+                    <span>More</span>
+                </a>
+            </nav>
+            <button class="post-btn" onclick="openPostModal()">Post</button>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <div class="header">
+                <button class="back-btn" onclick="goBack()">←</button>
+                <span class="header-title">Post</span>
+            </div>
+
+            <div class="post-header">
+                <span class="popular-badge">📍 Popular in your area</span>
+            </div>
+
+            <div class="post">
+                <div class="post-author" onclick="viewProfile('@TheDrivenMan')">
+                    <div class="avatar"></div>
+                    <div class="author-info">
+                        <span class="author-name">The Driven Man</span>
+                        <span class="verified">✅</span>
+                        <span class="username">@TheDrivenMan</span>
+                    </div>
+                </div>
+
+                <div class="post-content">
+                    Being a Man is not Easy 💯
+                </div>
+
+                <div class="video-container" onclick="togglePlay()">
+                    <div class="video-player" id="videoPlayer">
+                        <button class="play-btn" onclick="event.stopPropagation(); togglePlay()">▶</button>
+                        <div class="video-actions">
+                            <button class="video-action-btn" onclick="event.stopPropagation(); toggleMute()" title="Mute/Unmute">🔊</button>
+                            <button class="video-action-btn" onclick="event.stopPropagation(); togglePictureInPicture()" title="Picture in Picture">📱</button>
+                            <button class="video-action-btn" onclick="event.stopPropagation(); toggleFullscreen()" title="Fullscreen">⛶</button>
+                        </div>
+                        <div class="video-controls">
+                            <button class="play-btn" style="width: 24px; height: 24px; font-size: 12px;" onclick="event.stopPropagation(); togglePlay()">▶</button>
+                            <div class="progress-bar" onclick="event.stopPropagation(); seekVideo(event)">
+                                <div class="progress-fill"></div>
+                            </div>
+                            <span class="time-display">0:48 / 1:53</span>
+                            <button class="video-action-btn" style="position: static;" onclick="event.stopPropagation(); toggleMute()">🔊</button>
+                            <button class="video-action-btn" style="position: static;" onclick="event.stopPropagation(); toggleFullscreen()">⛶</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="post-meta">
+                    4:48 PM · Jun 18, 2025 · <span class="clickable" onclick="showAnalytics()">4.7M Views</span>
+                </div>
+
+                <div class="post-actions">
+                    <button class="action-btn" onclick="toggleReply(this)" data-count="556">
+                        <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M1.751 10c0-4.42 3.584-8 8.005-8h4.366c4.49 0 8.129 3.64 8.129 8.13 0 2.96-1.607 5.68-4.196 7.11l-8.054 4.46v-3.69h-.067c-4.49.1-8.183-3.51-8.183-8.01z"></path></svg>
+                        <span>Reply</span>
+                    </button>
+                    <button class="action-btn" onclick="toggleRetweet(this)" data-count="4700">
+                        <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M4.5 3.88l4.432 4.14-1.364 1.46L5.5 7.55V16c0 1.1.896 2 2 2H13v2H7.5c-2.209 0-4-1.791-4-4V7.55L1.432 9.48.068 8.02 4.5 3.88zM16.5 6H11V4h5.5c2.209 0 4 1.791 4 4v8.45l2.068-1.93 1.364 1.46-4.432 4.14-4.432-4.14 1.364-1.46 2.068 1.93V8c0-1.1-.896-2-2-2z"></path></svg>
+                        <span>Repost</span>
+                    </button>
+                    <button class="action-btn" onclick="toggleLike(this)" data-count="47000">
+                        <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M16.697 5.5c-1.222-.06-2.679.51-3.89 2.16l-.805 1.09-.806-1.09C9.984 6.01 8.526 5.44 7.304 5.5c-1.243.07-2.349.78-2.91 1.91-.552 1.12-.633 2.78.479 4.82 1.074 1.97 3.257 4.27 7.129 6.61 3.87-2.34 6.052-4.64 7.126-6.61 1.111-2.04 1.030-3.7.477-4.82-.561-1.13-1.666-1.84-2.908-1.91zm4.187 7.69c-1.351 2.48-4.001 5.12-8.379 7.67l-.503.3-.504-.3c-4.379-2.55-7.029-5.19-8.382-7.67-1.36-2.5-1.41-4.86-.514-6.67.887-1.79 2.647-2.91 4.601-3.01 1.651-.09 3.368.56 4.798 2.01 1.429-1.45 3.146-2.1 4.796-2.01 1.954.1 3.714 1.22 4.601 3.01.896 1.81.846 4.17-.514 6.67z"></path></svg>
+                        <span>Like</span>
+                    </button>
+                    <button class="action-btn" onclick="showAnalytics()" data-count="6900">
+                        <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M8.75 21V3h2v18h-2zM18.25 21V8.5h2V21h-2zM13.5 21V10.75h2V21h-2zM3.5 21v-9h2v9h-2z"></path></svg>
+                        <span>View</span>
+                    </button>
+                    <button class="action-btn" onclick="toggleBookmark(this)">
+                        <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M4 4.5C4 3.12 5.119 2 6.5 2h11C18.881 2 20 3.12 20 4.5v18.44l-8-5.71-8 5.71V4.5zM6.5 4c-.276 0-.5.22-.5.5v14.56l6-4.29 6 4.29V4.5c0-.28-.224-.5-.5-.5h-11z"></path></svg>
+                        <span>Bookmark</span>
+                    </button>
+                    <button class="action-btn" onclick="sharePost()">
+                        <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M12 2.59l5.7 5.7-1.41 1.42L13 6.41V16h-2V6.41l-3.3 3.3-1.41-1.42L12 2.59zM21 15l-.02 3.51c0 1.38-1.12 2.49-2.5 2.49H5.5C4.11 21 3 19.88 3 18.5V15h2v3.5c0 .28.22.5.5.5h12.98c.28 0 .5-.22.5-.5L19 15h2z"></path></svg>
+                        <span>Share</span>
+                    </button>
+                </div>
+            </div>
+
+             <div class="reply-section">
+                <div class="reply-input">
+                    <div class="avatar"></div>
+                    <textarea class="reply-text" placeholder="Post your reply" oninput="updateReplyButton()"></textarea>
+                    <button class="reply-btn" onclick="submitReply()">Reply</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Sidebar -->
+        <div class="right-sidebar">
+            <div class="search-box">
+                <input type="text" class="search-input" placeholder="Search..." />
+                <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor" style="cursor: pointer;"><path d="M10.25 3.75c-3.59 0-6.5 2.91-6.5 6.5s2.91 6.5 6.5 6.5c1.795 0 3.419-.726 4.596-1.904 1.178-1.177 1.904-2.801 1.904-4.596 0-3.59-2.91-6.5-6.5-6.5zm-8.5 6.5c0-4.694 3.806-8.5 8.5-8.5s8.5 3.806 8.5 8.5c0 1.986-.682 3.815-1.824 5.262l4.781 4.781-1.414 1.414-4.781-4.781C13.565 17.318 11.736 18 9.75 18c-4.694 0-8.5-3.806-8.5-8.5z"></path></svg>
+            </div>
+
+            <div class="widget">
+                <div class="widget-header">Trends</div>
+                <div class="widget-content">
+                    <div class="trending-item">
+                        <div>
+                            <div class="trending-category">Sports · Trending</div>
+                            <div class="trending-topic">Local Team Wins Championship</div>
+                            <div class="trending-posts">1.2K Posts</div>
+                        </div>
+                        <div>
+                            <button class="action-btn" style="padding: 8px 12px; font-size: 14px;">Follow</button>
+                        </div>
+                    </div>
+                    <div class="trending-item">
+                        <div>
+                            <div class="trending-category">Technology · Trending</div>
+                            <div class="trending-topic">New Phone Model Released</div>
+                            <div class="trending-posts">900 Posts</div>
+                        </div>
+                        <div>
+                            <button class="action-btn" style="padding: 8px 12px; font-size: 14px;">Follow</button>
+                        </div>
+                    </div>
+                    <div class="trending-item">
+                        <div>
+                            <div class="trending-category">Entertainment · Trending</div>
+                            <div class="trending-topic">Celebrity XYZ's New Movie</div>
+                            <div class="trending-posts">1.5K Posts</div>
+                        </div>
+                        <div>
+                            <button class="action-btn" style="padding: 8px 12px; font-size: 14px;">Follow</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="widget">
+                <div class="widget-header">Relevant People</div>
+                <div class="widget-content">
+                    <div class="person">
+                        <div class="person-info" onclick="viewProfile('@JaneDoe')">
+                            <div class="avatar"></div>
+                            <div class="person-details">
+                                <div class="person-name">Jane Doe</div>
+                                <div class="person-handle">@JaneDoe</div>
+                            </div>
+                        </div>
+                        <button class="follow-btn" onclick="followUser('@JaneDoe')">Follow</button>
+                    </div>
+                    <div class="person">
+                        <div class="person-info" onclick="viewProfile('@JohnSmith')">
+                            <div class="avatar"></div>
+                            <div class="person-details">
+                                <div class="person-name">John Smith</div>
+                                <div class="person-handle">@JohnSmith</div>
+                            </div>
+                        </div>
+                        <button class="follow-btn" onclick="followUser('@JohnSmith')">Follow</button>
+                    </div>
+                    <div class="person">
+                        <div class="person-info" onclick="viewProfile('@AliceJones')">
+                            <div class="avatar"></div>
+                            <div class="person-details">
+                                <div class="person-name">Alice Jones</div>
+                                <div class="person-handle">@AliceJones</div>
+                            </div>
+                        </div>
+                        <button class="follow-btn" onclick="followUser('@AliceJones')">Follow</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Theme toggle script
+        function toggleTheme() {
+            const currentTheme = document.body.getAttribute('data-theme');
+            const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+            document.body.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+
+            const themeIcon = document.getElementById('theme-icon');
+            themeIcon.textContent = newTheme === 'light' ? '☀️' : '🌙';
+        }
+
+        // Load theme from local storage
+        document.addEventListener('DOMContentLoaded', () => {
+            const savedTheme = localStorage.getItem('theme') || 'light';
+            document.body.setAttribute('data-theme', savedTheme);
+            const themeIcon = document.getElementById('theme-icon');
+            themeIcon.textContent = savedTheme === 'light' ? '☀️' : '🌙';
+        });
+
+        // Navigation simulation
+        function navigate(page) {
+            console.log(`Navigating to ${page}`);
+            // Add your navigation logic here
+        }
+
+        // Open post modal
+        function openPostModal() {
+            document.getElementById('postModal').style.display = 'block';
+        }
+
+        // Close post modal
+        function closeModal() {
+            document.getElementById('postModal').style.display = 'none';
+        }
+
+        // Submit post (dummy function)
+        function submitPost() {
+            const postContent = document.querySelector('textarea').value;
+            console.log(`Posting: ${postContent}`);
+            // Add your post submission logic here
+            closeModal();
+        }
+
+        // Toggle reply section
+        function toggleReply(button) {
+            const post = button.closest('.post');
+            const replySection = post.querySelector('.reply-section');
+            replySection.style.display = replySection.style.display === 'none' || !replySection.style.display ? 'block' : 'none';
+        }
+
+        // Submit reply (dummy function)
+        function submitReply() {
+            const replyText = document.querySelector('.reply-text').value;
+            console.log(`Replying: ${replyText}`);
+            // Add your reply submission logic here
+        }
+
+        // Toggle like (dummy function)
+        function toggleLike(button) {
+            button.classList.toggle('liked');
+            const countSpan = button.querySelector('span');
+            let count = parseInt(countSpan.getAttribute('data-count'));
+            count = button.classList.contains('liked') ? count + 1 : count - 1;
+            countSpan.setAttribute('data-count', count);
+            countSpan.textContent = count.toLocaleString();
+        }
+
+        // Toggle retweet (dummy function)
+        function toggleRetweet(button) {
+            button.classList.toggle('retweeted');
+            const countSpan = button.querySelector('span');
+            let count = parseInt(countSpan.getAttribute('data-count'));
+            count = button.classList.contains('retweeted') ? count + 1 : count - 1;
+            countSpan.setAttribute('data-count', count);
+            countSpan.textContent = count.toLocaleString();
+        }
+
+        // Toggle bookmark (dummy function)
+        function toggleBookmark(button) {
+            button.classList.toggle('bookmarked');
+        }
+
+        // Show analytics (dummy function)
+        function showAnalytics() {
+            console.log('Showing analytics');
+            // Add your analytics display logic here
+        }
+
+        // View profile (dummy function)
+        function viewProfile(username) {
+            console.log(`Viewing profile of ${username}`);
+            // Add your profile viewing logic here
+        }
+
+        // Follow user (dummy function)
+        function followUser(username) {
+            console.log(`Following ${username}`);
+            // Add your follow user logic here
+        }
+
+        // Video player controls (dummy functions)
+        function togglePlay() {
+            console.log('Toggling play/pause');
+            // Add your play/pause logic here
+        }
+
+        function toggleMute() {
+            console.log('Toggling mute/unmute');
+            // Add your mute/unmute logic here
+        }
+
+        function togglePictureInPicture() {
+            console.log('Toggling picture in picture');
+            // Add your picture in picture logic here
+        }
+
+        function toggleFullscreen() {
+            console.log('Toggling fullscreen');
+            // Add your fullscreen logic here
+        }
+
+        function seekVideo(event) {
+            const progressBar = event.currentTarget;
+            const rect = progressBar.getBoundingClientRect();
+            const offsetX = event.clientX - rect.left;
+            const width = progressBar.offsetWidth;
+            const percentage = offsetX / width;
+            console.log(`Seeking video to ${percentage * 100}%`);
+            // Add your video seeking logic here
+        }
+    </script>
+</body>
+</html>
