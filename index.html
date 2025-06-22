@@ -906,25 +906,12 @@
             .right-sidebar {
                 display: none;
             }
-            
-            /* Move theme toggle to header */
-            .header {
-                padding: 16px 20px;
-                display: flex;
-                align-items: center;
-                justify-content: space-between; /* Add space between title and toggle */
+            .main-content {
+                max-width: none;
+                margin-right: 0;
             }
-            
-            .header-left {
-                display: flex;
-                align-items: center;
-            }
-            
-            .theme-toggle {
-                position: static;
-                width: 40px;
-                height: 40px;
-                margin: 0;
+            .container {
+                max-width: none;
             }
         }
 
@@ -1334,13 +1321,8 @@
         <!-- Main Content -->
         <div class="main-content">
             <div class="header">
-                <div class="header-left">
-                    <button class="back-btn" onclick="goBack()">←</button>
-                    <span class="header-title">Post</span>
-                </div>
-                <button class="theme-toggle mobile-only" onclick="toggleTheme()" title="Toggle theme">
-                    <span id="theme-icon-mobile">☀️</span>
-                </button>
+                <button class="back-btn" onclick="goBack()">←</button>
+                <span class="header-title">Post</span>
             </div>
 
             <div class="post-header">
