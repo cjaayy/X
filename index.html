@@ -58,16 +58,35 @@
             color: var(--text-primary);
             border: 1px solid var(--border-color);
             border-radius: 50%;
-            width: 40px;
-            height: 40px;
+            width: 60px;
+            height: 60px;
             cursor: pointer;
-            font-size: 18px;
+            font-size: 24px;
             display: flex;
             align-items: center;
             justify-content: center;
             transition: all 0.3s ease;
             z-index: 1000;
             box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        /* Theme Toggle - Only in search container */
+        .theme-toggle {
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+            border: 1px solid var(--border-color);
+            border-radius: 50%;
+            width: 48px;
+            height: 48px;
+            cursor: pointer;
+            font-size: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            margin-right: 12px;
+            flex-shrink: 0;
         }
 
         .theme-toggle:hover {
@@ -80,12 +99,23 @@
             transform: scale(0.95) rotate(180deg);
         }
 
+        /* Theme toggle icon styling */
+        .theme-toggle #theme-icon {
+            filter: grayscale(100%);
+            color: var(--text-primary);
+            text-shadow: none;
+        }
+
         [data-theme="dark"] .theme-toggle {
             box-shadow: 0 2px 8px rgba(255,255,255,0.1);
         }
 
         [data-theme="dark"] .theme-toggle:hover {
             box-shadow: 0 4px 12px rgba(255,255,255,0.15);
+        }
+
+        [data-theme="dark"] .theme-toggle #theme-icon {
+            filter: grayscale(100%) brightness(200%);
         }
 
         /* Sidebar */
@@ -556,16 +586,22 @@
             overflow-y: auto;
         }
 
+        .search-container {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
         .search-box {
             background-color: var(--bg-secondary);
             border: 1px solid var(--border-color);
             border-radius: 24px;
             padding: 12px 16px;
-            margin-bottom: 20px;
             display: flex;
             align-items: center;
             gap: 12px;
             transition: all 0.2s;
+            flex: 1;
         }
 
         .search-box:focus-within {
@@ -914,11 +950,10 @@
                 margin-bottom: 20px;
             }
             .theme-toggle {
-                top: 15px;
-                right: 15px;
-                width: 36px;
-                height: 36px;
-                font-size: 16px;
+                width: 44px;
+                height: 44px;
+                font-size: 18px;
+                margin-right: 10px;
             }
             .header {
                 padding: 12px 16px;
@@ -1007,11 +1042,10 @@
                 box-shadow: 0 4px 12px rgba(29, 155, 240, 0.4);
             }
             .theme-toggle {
-                top: 10px;
-                right: 10px;
-                width: 34px;
-                height: 34px;
-                font-size: 14px;
+                width: 40px;
+                height: 40px;
+                font-size: 16px;
+                margin-right: 8px;
             }
             .header {
                 padding: 10px 12px;
@@ -1171,11 +1205,6 @@
     </style>
 </head>
 <body data-theme="light">
-    <!-- Theme Toggle - Top Right Corner -->
-    <button class="theme-toggle" onclick="toggleTheme()" title="Toggle theme">
-        <span id="theme-icon">☀️</span>
-    </button>
-
     <!-- Post Modal -->
     <div id="postModal" class="modal">
         <div class="modal-content">
@@ -1388,9 +1417,14 @@
 
         <!-- Right Sidebar -->
         <div class="right-sidebar">
-            <div class="search-box">
-                <input type="text" class="search-input" placeholder="Search..." />
-                <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor" style="cursor: pointer;"><path d="M10.25 3.75c-3.59 0-6.5 2.91-6.5 6.5s2.91 6.5 6.5 6.5c1.795 0 3.419-.726 4.596-1.904 1.178-1.177 1.904-2.801 1.904-4.596 0-3.59-2.91-6.5-6.5-6.5zm-8.5 6.5c0-4.694 3.806-8.5 8.5-8.5s8.5 3.806 8.5 8.5c0 1.986-.682 3.815-1.824 5.262l4.781 4.781-1.414 1.414-4.781-4.781C13.565 17.318 11.736 18 9.75 18c-4.694 0-8.5-3.806-8.5-8.5z"></path></svg>
+            <div class="search-container">
+                <button class="theme-toggle" onclick="toggleTheme()" title="Toggle theme">
+                    <span id="theme-icon">☀️</span>
+                </button>
+                <div class="search-box">
+                    <input type="text" class="search-input" placeholder="Search..." />
+                    <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor" style="cursor: pointer;"><path d="M10.25 3.75c-3.59 0-6.5 2.91-6.5 6.5s2.91 6.5 6.5 6.5c1.795 0 3.419-.726 4.596-1.904 1.178-1.177 1.904-2.801 1.904-4.596 0-3.59-2.91-6.5-6.5-6.5zm-8.5 6.5c0-4.694 3.806-8.5 8.5-8.5s8.5 3.806 8.5 8.5c0 1.986-.682 3.815-1.824 5.262l4.781 4.781-1.414 1.414-4.781-4.781C13.565 17.318 11.736 18 9.75 18c-4.694 0-8.5-3.806-8.5-8.5z"></path></svg>
+                </div>
             </div>
 
             <div class="widget">
@@ -1476,7 +1510,7 @@
             localStorage.setItem('theme', newTheme);
 
             const themeIcon = document.getElementById('theme-icon');
-            themeIcon.textContent = newTheme === 'light' ? '☀️' : '🌙';
+            themeIcon.textContent = newTheme === 'light' ? '☀' : '☾';
         }
 
         // Load theme from local storage
@@ -1484,7 +1518,7 @@
             const savedTheme = localStorage.getItem('theme') || 'light';
             document.body.setAttribute('data-theme', savedTheme);
             const themeIcon = document.getElementById('theme-icon');
-            themeIcon.textContent = savedTheme === 'light' ? '☀️' : '🌙';
+            themeIcon.textContent = savedTheme === 'light' ? '☀' : '☾';
         });
 
         // Navigation simulation
